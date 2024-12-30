@@ -13,6 +13,14 @@ services:
       - ${DATADIR:-data}:/data
       - ./plugins:/plugins
       - ./config:/config
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "5"
+        compress: "true"
+        mode: "non-blocking"
+        tag: "{{.Name}}"
     stdin_open: true
     tty: true
     restart: unless-stopped
