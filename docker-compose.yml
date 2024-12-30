@@ -1,14 +1,25 @@
 services:
   mc:
+    container_name: ${NAME:-minecraft_server}
     image: itzg/minecraft-server
     environment:
       EULA: "true"
+      ENABLE_ROLLING_LOGS: "true"
+    env_file:
+      -${ENV_FILE:-.env}
     ports:
-      - "25565:25565"
+      - "${PORT:-25565}:25565"
     volumes:
-      - data:/data
+      - ${DATADIR:-data}:/data
     stdin_open: true
     tty: true
     restart: unless-stopped
-volumes:
-  data: {}
+    deploy:
+      resources:
+        limits:
+          cpus: ${CPUS:-3}
+          memory: ${MEMORY:-6G}
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536

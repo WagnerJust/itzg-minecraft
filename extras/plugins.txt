@@ -1,0 +1,3 @@
+https://github.com/EssentialsX/Essentials/releases/download/2.20.1/EssentialsX-2.20.1.jar
+https://github.com/EssentialsX/Essentials/releases/download/2.20.1/EssentialsXChat-2.20.1.jar https://github.com/EssentialsX/Essentials/releases/download/2.20.1/EssentialsXSpawn-2.20.1.jar
+https://cdn.modrinth.com/data/TpxWaIMT/versions/KkVdJRVL/lagassist-2.32.jar
