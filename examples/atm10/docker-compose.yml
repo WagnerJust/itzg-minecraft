@@ -1,25 +1,37 @@
 services:
   mc:
+    container_name: ${NAME}
     image: itzg/minecraft-server
-    tty: true
-    stdin_open: true
-    ports:
-      - "25565:25565"
     environment:
-      EULA: true
-      MOD_PLATFORM: AUTO_CURSEFORGE
-      # allocate from https://console.curseforge.com/ and set in .env file
-      CF_API_KEY: ${CF_API_KEY}
-      CF_SLUG: all-the-mods-10
-      # Optional: select a specific version/file
-      # CF_FILENAME_MATCHER: "1.17"
-      MEMORY: 4G
-      CF_OVERRIDES_EXCLUSIONS: |
-        shaderpacks/**
+      EULA: "true"
+      ENABLE_ROLLING_LOGS: "true"
+      TYPE: NEOFORGE
+      GENERICK_PACK: downloads/${MODPACK_NAME}.zip
+      SERVER_NAME: "rifttsar's atm10 server"
+    env_file:
+      - ${ENV_FILE}
+    ports:
+      - "${PORT}:25565"
     volumes:
-      # Use managed volume by default, but can change to a relative path like
-      # ./data:/data
-      # to use a host directory
-      - mc-data:/data
-volumes:
-  mc-data:
+      - ${DATADIR}:/data
+      - ./plugins:/plugins
+      - ./config:/config
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "5"
+        compress: "true"
+        mode: "non-blocking"
+        tag: "{{.Name}}"
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: ${CPUS}
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536

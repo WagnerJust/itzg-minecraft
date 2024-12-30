@@ -6,38 +6,59 @@ CPUS=""
 NAME=""
 PORT=""
 DATADIR=""
+MODPACK_URL=""
+MODPACK_NAME=""
 
 # Get user inputs with validation
-while [ -z "$MEMORY" ]; do
-    read -p "Enter memory allocation (e.g., 2G): " MEMORY
-    [[ ! $MEMORY =~ ^[0-9]+[GM]$ ]] && echo "Invalid format. Use number followed by G or M" && MEMORY=""
-done
+read -p "Enter memory allocation (default is 4G): " MEMORY
+if [ ! -z "$MEMORY" ]; then
+    [[ ! $MEMORY =~ ^[0-9]+[GM]$ ]] && echo "Invalid format. Use number followed by G or M" && exit 1
+fi
+MEMORY=${MEMORY:-"4G"}
 
-while [ -z "$CPUS" ]; do
-    read -p "Enter number of CPUs: " CPUS
-    [[ ! $CPUS =~ ^[0-9]+$ ]] && echo "Please enter a valid number" && CPUS=""
-done
+read -p "Enter number of CPUs (default is 2): " CPUS
+if [ ! -z "$CPUS" ]; then
+    [[ ! $CPUS =~ ^[0-9]+$ ]] && echo "Please enter a valid number" && exit 1
+fi
+CPUS=${CPUS:-"2"}
 
-while [ -z "$NAME" ]; do
-    read -p "Enter container name: " NAME
-done
+read -p "Enter container name: " NAME
+NAME=${NAME:-"minecraft"}
 
-while [ -z "$PORT" ]; do
-    read -p "Enter port number (default is 25565): " PORT
-    [[ ! $PORT =~ ^[0-9]+$ ]] && echo "Please enter a valid port number" && PORT=""
-done
+read -p "Enter port number (default is 25565): " PORT
+if [ ! -z "$PORT" ]; then
+    [[ ! $PORT =~ ^[0-9]+$ ]] && echo "Please enter a valid port number" && exit 1
+fi
+PORT=${PORT:-"25565"}
 
-while [ -z "$DATADIR" ]; do
-    read -p "Enter data directory: " DATADIR
-done
+read -p "Enter data directory (default is /data): " DATADIR
+DATADIR=${DATADIR:-"~/MinecraftData/data"}
 
-# Save to .env file
-cat > .env << EOL
-MEMORY=$MEMORY
-CPUS=$CPUS
-NAME=$NAME
-PORT=$PORT
-DATADIR=$DATADIR
-EOL
+read -p "Enter Modpack.zip url (optional): " MODPACK_URL
+
+if [ ! -z "$MODPACK_URL" ]; then
+    read -p "Enter Modpack name (e.g., atm8, ftb): " MODPACK_NAME
+    while [ -z "$MODPACK_NAME" ]; do
+        echo "Modpack name is required when URL is provided"
+        read -p "Enter Modpack name: " MODPACK_NAME
+    done
+fi
+
+# Create .env file with all values (they now all have defaults)
+> .env
+echo "MEMORY=$MEMORY" >> .env
+echo "CPUS=$CPUS" >> .env
+echo "NAME=$NAME" >> .env
+echo "PORT=$PORT" >> .env
+echo "DATADIR=$DATADIR" >> .env
+echo "SNOOPER_ENABLED=false" >> .env
+echo "ALLOW_FLIGHT=true" >> .env
+[ ! -z "$MODPACK_NAME" ] && echo "MODPACK_NAME=$MODPACK_NAME" >> .env
+
+# Download modpack only if URL is provided
+if [ ! -z "$MODPACK_URL" ]; then
+    mkdir -p downloads
+    curl -o "downloads/${MODPACK_NAME}.zip" "$MODPACK_URL"
+fi
 
 docker compose up --build -d
