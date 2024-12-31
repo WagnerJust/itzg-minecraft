@@ -78,8 +78,9 @@ echo "SNOOPER_ENABLED=false" >> .env
 echo "ALLOW_FLIGHT=true" >> .env
 echo "SERVER_NAME=$SERVER_NAME" >> .env
 echo "HARDCORE=$HARDCORE" >> .env
+[ ! -z "$VERSION" ] && echo "VERSION=$VERSION" >> .env
 [ ! -z "$MODPACK_NAME" ] && echo "MODPACK_NAME=$MODPACK_NAME" >> .env
-[ ! -z "$MINECRAFT_VERSION" ] && echo "MINECRAFT_VERSION=$MINECRAFT_VERSION" >> .env
+
 
 # Download modpack only if URL is provided
 if [ ! -z "$MODPACK_URL" ]; then
