@@ -7,7 +7,6 @@ services:
       ENABLE_ROLLING_LOGS: "true"
       TYPE: NEOFORGE
       GENERICK_PACK: downloads/${MODPACK_NAME}.zip
-      SERVER_NAME: "rifttsar's atm10 server"
     env_file:
       - ${ENV_FILE}
     ports:

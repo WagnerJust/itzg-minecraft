@@ -8,6 +8,9 @@ PORT=""
 DATADIR=""
 MODPACK_URL=""
 MODPACK_NAME=""
+SERVER_NAME=""
+VERSION=""
+HARDCORE=""
 
 # Get user inputs with validation
 read -p "Enter memory allocation (default is 4G): " MEMORY
@@ -34,6 +37,25 @@ PORT=${PORT:-"25565"}
 read -p "Enter data directory (default is /data): " DATADIR
 DATADIR=${DATADIR:-"~/MinecraftData/data"}
 
+read -p "Enter server name (default is MinecraftServer): " SERVER_NAME
+SERVER_NAME=${SERVER_NAME:-"MinecraftServer"}
+
+read -p "Enter Minecraft version (format: x.xx or x.xx.x, press enter to skip): " VERSION
+if [ ! -z "$VERSION" ]; then
+    if [[ ! $VERSION =~ ^[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]; then
+        echo "Invalid version format. Use x.xx or x.xx.x (e.g., 1.19 or 1.19.2)"
+        exit 1
+    fi
+fi
+
+read -p "Enable hardcore mode? (yes/no, default: no): " HARDCORE_INPUT
+if [[ "${HARDCORE_INPUT,,}" == "yes" ]]; then
+    HARDCORE="true"
+else
+    HARDCORE="false"
+fi
+
+
 read -p "Enter Modpack.zip url (optional): " MODPACK_URL
 
 if [ ! -z "$MODPACK_URL" ]; then
@@ -44,6 +66,7 @@ if [ ! -z "$MODPACK_URL" ]; then
     done
 fi
 
+
 # Create .env file with all values (they now all have defaults)
 > .env
 echo "MEMORY=$MEMORY" >> .env
@@ -53,7 +76,10 @@ echo "PORT=$PORT" >> .env
 echo "DATADIR=$DATADIR" >> .env
 echo "SNOOPER_ENABLED=false" >> .env
 echo "ALLOW_FLIGHT=true" >> .env
+echo "SERVER_NAME=$SERVER_NAME" >> .env
+echo "HARDCORE=$HARDCORE" >> .env
 [ ! -z "$MODPACK_NAME" ] && echo "MODPACK_NAME=$MODPACK_NAME" >> .env
+[ ! -z "$MINECRAFT_VERSION" ] && echo "MINECRAFT_VERSION=$MINECRAFT_VERSION" >> .env
 
 # Download modpack only if URL is provided
 if [ ! -z "$MODPACK_URL" ]; then
@@ -61,4 +87,4 @@ if [ ! -z "$MODPACK_URL" ]; then
     curl -o "downloads/${MODPACK_NAME}.zip" "$MODPACK_URL"
 fi
 
-docker compose up --build -d
+docker compose up -d
