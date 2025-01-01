@@ -12,6 +12,9 @@ ENABLE_RCON=""
 RCON_PASSWORD=""
 RCON_PORT=""
 OPS_LIST=""
+CF_API_KEY=""
+CF_PAGE_URL=""
+CF_FILENAME_MATCHER=""
 
 # Get user inputs with validation
 read -p "Enter initial memory allocation (default is 2G): " INIT_MEMORY
@@ -37,8 +40,28 @@ if [ ! -z "$VERSION" ]; then
     fi
 fi
 
-read -p "Enter server type (VANILLA, FORGE, FABRIC, NEOFORGE, default is VANILLA): " TYPE
+read -p "Enter server type (VANILLA, FORGE, FABRIC, NEOFORGE, AUTO_CURSEFORGE default is VANILLA): " TYPE
 TYPE=${TYPE:-"VANILLA"}
+
+if [ "$TYPE" == "AUTO_CURSEFORGE" ]; then
+    read -p "Enter CurseForge API Key: " CF_API_KEY
+    while [ -z "$CF_API_KEY" ]; do
+        echo "CurseForge API Key is required for AUTO_CURSEFORGE"
+        read -p "Enter CurseForge API Key: " CF_API_KEY
+    done
+
+    read -p "Enter CurseForge Project Page URL: " CF_PAGE_URL
+    while [ -z "$CF_PAGE_URL" ]; do
+        echo "CurseForge Project Page URL is required"
+        read -p "Enter CurseForge Project Page URL: " CF_PAGE_URL
+    done
+
+    read -p "Enter filename matcher pattern (e.g., 'server'): " CF_FILENAME_MATCHER
+    while [ -z "$CF_FILENAME_MATCHER" ]; do
+        echo "Filename matcher pattern is required"
+        read -p "Enter filename matcher pattern: " CF_FILENAME_MATCHER
+    done
+fi
 
 # Add modpack handling
 MODPACK_URL=""
@@ -95,6 +118,9 @@ RCON_PASSWORD=$RCON_PASSWORD
 RCON_PORT=$RCON_PORT
 OPS_LIST=$OPS_LIST
 MODPACK_NAME=$MODPACK_NAME
+CF_API_KEY='$CF_API_KEY'
+CF_PAGE_URL=$CF_PAGE_URL
+CF_FILENAME_MATCHER=$CF_FILENAME_MATCHER
 EOL
 
 # Start the server
