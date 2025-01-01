@@ -62,10 +62,6 @@ services:
       VERSION: ${VERSION}
       SERVER_NAME: ${SERVER_NAME}
       TYPE: ${TYPE}
-      GENERIC_PACK: "/downloads/${MODPACK_NAME}.zip"
-      USE_MODPACK_START_SCRIPT: "false"
-      REMOVE_OLD_MODS: "false"
-      SKIP_GENERIC_PACK_UPDATE_CHECK: "true"
 
 volumes:
   data:
