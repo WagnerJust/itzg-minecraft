@@ -56,7 +56,7 @@ services:
       - ${PORT}:25565
     volumes:
       - ${DATADIR}:/data
-      - ./downloads:/downloads
+      - ./downloads:/data/downloads
     environment:
       <<: *env
       VERSION: ${VERSION}

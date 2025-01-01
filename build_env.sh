@@ -158,7 +158,7 @@ EOL
 # Add modpack-specific variables only for FORGE, FABRIC, or NEOFORGE
 if [[ "$TYPE" == "FORGE" || "$TYPE" == "FABRIC" || "$TYPE" == "NEOFORGE" ]]; then
     cat >> .env << EOL
-GENERIC_PACK="$MODPACK_PATH"
+GENERIC_PACK="/data/downloads/$MODPACK_NAME"
 USE_MODPACK_START_SCRIPT="false"
 REMOVE_OLD_MODS="false"
 SKIP_GENERIC_PACK_UPDATE_CHECK="true"
