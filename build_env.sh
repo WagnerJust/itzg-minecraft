@@ -83,15 +83,16 @@ if [[ "$TYPE" == "FORGE" || "$TYPE" == "FABRIC" || "$TYPE" == "NEOFORGE" ]]; the
             echo "Modpack name is required"
             read -p "Enter Modpack name: " MODPACK_NAME
         done
+        MODPACK_NAME="${MODPACK_NAME}.zip"
 
         # Check if input is a URL or local path
         if [[ "$MODPACK_INPUT" =~ ^https?:// ]]; then
             # Handle URL
-            echo "Downloading modpack to downloads/${MODPACK_NAME}.zip"
-            curl -L -o "downloads/${MODPACK_NAME}.zip" "$MODPACK_INPUT"
-            if file "downloads/${MODPACK_NAME}.zip" | grep -q "HTML"; then
+            echo "Downloading modpack to downloads/${MODPACK_NAME}"
+            curl -L -o "downloads/${MODPACK_NAME}" "$MODPACK_INPUT"
+            if file "downloads/${MODPACK_NAME}" | grep -q "HTML"; then
                 echo "The downloaded file is not a valid zip file. Please check the URL and try again."
-                rm "downloads/${MODPACK_NAME}.zip"
+                rm "downloads/${MODPACK_NAME}"
                 exit 1
             fi
         else
@@ -106,13 +107,13 @@ if [[ "$TYPE" == "FORGE" || "$TYPE" == "FABRIC" || "$TYPE" == "NEOFORGE" ]]; the
                 echo "Local file does not exist: $EXPANDED_PATH"
                 exit 1
             fi
-            echo "Copying modpack to downloads/$MODPACK_NAME.zip"
+            echo "Copying modpack to downloads/$MODPACK_NAME"
             cp "$EXPANDED_PATH" "downloads/$MODPACK_NAME"
         fi
 
-        if ! zipinfo -t "downloads/${MODPACK_NAME}.zip" > /dev/null; then
+        if ! zipinfo -t "downloads/${MODPACK_NAME}" > /dev/null; then
             echo "The downloaded file is not a valid zip file. Please check the URL and try again."
-            rm "downloads/${MODPACK_NAME}.zip"
+            rm "downloads/${MODPACK_NAME}"
             exit 1
         fi
         MODPACK_PATH="downloads/$MODPACK_NAME"
