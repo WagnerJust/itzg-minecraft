@@ -1,46 +1,35 @@
 #!/bin/bash
 
 # Initialize variables
-MEMORY=""
-CPUS=""
-NAME=""
+INIT_MEMORY=""
+MAX_MEMORY=""
 PORT=""
 DATADIR=""
-MODPACK_URL=""
-MODPACK_NAME=""
 SERVER_NAME=""
 VERSION=""
-HARDCORE=""
+TYPE=""
+ENABLE_RCON=""
+RCON_PASSWORD=""
+RCON_PORT=""
+OPS_LIST=""
 
 # Get user inputs with validation
-read -p "Enter memory allocation (default is 4G): " MEMORY
-if [ ! -z "$MEMORY" ]; then
-    [[ ! $MEMORY =~ ^[0-9]+[GM]$ ]] && echo "Invalid format. Use number followed by G or M" && exit 1
-fi
-MEMORY=${MEMORY:-"4G"}
+read -p "Enter initial memory allocation (default is 2G): " INIT_MEMORY
+INIT_MEMORY=${INIT_MEMORY:-"2G"}
 
-read -p "Enter number of CPUs (default is 2): " CPUS
-if [ ! -z "$CPUS" ]; then
-    [[ ! $CPUS =~ ^[0-9]+$ ]] && echo "Please enter a valid number" && exit 1
-fi
-CPUS=${CPUS:-"2"}
-
-read -p "Enter container name: " NAME
-NAME=${NAME:-"minecraft"}
+read -p "Enter maximum memory allocation (default is 4G): " MAX_MEMORY
+MAX_MEMORY=${MAX_MEMORY:-"4G"}
 
 read -p "Enter port number (default is 25565): " PORT
-if [ ! -z "$PORT" ]; then
-    [[ ! $PORT =~ ^[0-9]+$ ]] && echo "Please enter a valid port number" && exit 1
-fi
 PORT=${PORT:-"25565"}
 
-read -p "Enter data directory (default is /data): " DATADIR
-DATADIR=${DATADIR:-"~/MinecraftData/data"}
+read -p "Enter data directory (default is ~/Minecraft/data): " DATADIR
+DATADIR=${DATADIR:-"~/Minecraft/data"}
 
 read -p "Enter server name (default is MinecraftServer): " SERVER_NAME
 SERVER_NAME=${SERVER_NAME:-"MinecraftServer"}
 
-read -p "Enter Minecraft version (format: x.xx or x.xx.x, press enter to skip): " VERSION
+read -p "Enter Minecraft version (format: x.xx or x.xx.x, press enter for latest): " VERSION
 if [ ! -z "$VERSION" ]; then
     if [[ ! $VERSION =~ ^[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]; then
         echo "Invalid version format. Use x.xx or x.xx.x (e.g., 1.19 or 1.19.2)"
@@ -48,44 +37,65 @@ if [ ! -z "$VERSION" ]; then
     fi
 fi
 
-read -p "Enable hardcore mode? (yes/no, default: no): " HARDCORE_INPUT
-if [[ "${HARDCORE_INPUT,,}" == "yes" ]]; then
-    HARDCORE="true"
-else
-    HARDCORE="false"
-fi
+read -p "Enter server type (VANILLA, FORGE, FABRIC, NEOFORGE, default is VANILLA): " TYPE
+TYPE=${TYPE:-"VANILLA"}
 
+# Add modpack handling
+MODPACK_URL=""
+MODPACK_NAME=""
 
-read -p "Enter Modpack.zip url (optional): " MODPACK_URL
-
-if [ ! -z "$MODPACK_URL" ]; then
-    read -p "Enter Modpack name (e.g., atm8, ftb): " MODPACK_NAME
-    while [ -z "$MODPACK_NAME" ]; do
-        echo "Modpack name is required when URL is provided"
+if [[ "$TYPE" == "FORGE" || "$TYPE" == "FABRIC" || "$TYPE" == "NEOFORGE" ]]; then
+    read -p "Enter Modpack URL (optional): " MODPACK_URL
+    if [ ! -z "$MODPACK_URL" ]; then
         read -p "Enter Modpack name: " MODPACK_NAME
-    done
+        while [ -z "$MODPACK_NAME" ]; do
+            echo "Modpack name is required when URL is provided"
+            read -p "Enter Modpack name: " MODPACK_NAME
+        done
+        
+        echo "Downloading modpack to downloads/${MODPACK_NAME}.zip"
+        mkdir -p downloads
+        curl -L -o "downloads/${MODPACK_NAME}.zip" "$MODPACK_URL"
+        if file "downloads/${MODPACK_NAME}.zip" | grep -q "HTML"; then
+            echo "The downloaded file is not a valid zip file. Please check the URL and try again."
+            rm "downloads/${MODPACK_NAME}.zip"
+            exit 1
+        fi
+    fi
 fi
 
-
-# Create .env file with all values (they now all have defaults)
-> .env
-echo "MEMORY=$MEMORY" >> .env
-echo "CPUS=$CPUS" >> .env
-echo "NAME=$NAME" >> .env
-echo "PORT=$PORT" >> .env
-echo "DATADIR=$DATADIR" >> .env
-echo "SNOOPER_ENABLED=false" >> .env
-echo "ALLOW_FLIGHT=true" >> .env
-echo "SERVER_NAME=$SERVER_NAME" >> .env
-echo "HARDCORE=$HARDCORE" >> .env
-[ ! -z "$VERSION" ] && echo "VERSION=$VERSION" >> .env
-[ ! -z "$MODPACK_NAME" ] && echo "MODPACK_NAME=$MODPACK_NAME" >> .env
-
-
-# Download modpack only if URL is provided
-if [ ! -z "$MODPACK_URL" ]; then
-    mkdir -p downloads
-    curl -o "downloads/${MODPACK_NAME}.zip" "$MODPACK_URL"
+read -p "Enable RCON? (yes/no, default: no): " ENABLE_RCON_INPUT
+if [[ "${ENABLE_RCON_INPUT,,}" == "yes" ]]; then
+    ENABLE_RCON="true"
+    read -p "Enter RCON password: " RCON_PASSWORD
+    read -p "Enter RCON port (default 25575): " RCON_PORT
+    RCON_PORT=${RCON_PORT:-"25575"}
+else
+    ENABLE_RCON="false"
+    RCON_PASSWORD=""
+    RCON_PORT="25575"
 fi
 
+read -p "Enter operator usernames (comma-separated, press enter to skip): " OPS_LIST
+
+# Remove existing .env file if it exists
+rm -f .env
+
+# Create .env file
+cat > .env << EOL
+INIT_MEMORY=$INIT_MEMORY
+MAX_MEMORY=$MAX_MEMORY
+PORT=$PORT
+DATADIR=$DATADIR
+SERVER_NAME=$SERVER_NAME
+VERSION=${VERSION}
+TYPE=$TYPE
+ENABLE_RCON=$ENABLE_RCON
+RCON_PASSWORD=$RCON_PASSWORD
+RCON_PORT=$RCON_PORT
+OPS_LIST=$OPS_LIST
+MODPACK_NAME=$MODPACK_NAME
+EOL
+
+# Start the server
 docker compose up -d

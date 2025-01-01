@@ -1,34 +1,74 @@
+x-server: &server
+  env_file:
+    - .env
+  tty: true
+  stdin_open: true
+
+  environment: &env
+    LEVEL_TYPE: "minecraft:normal"
+    EULA: "true"
+    OPS: ${OPS_LIST}
+    DIFFICULTY: "normal"
+    MAX_PLAYERS: "3"
+    VIEW_DISTANCE: "6"
+    SIMULATION-DISTANCE: "6"
+    SPAWN_PROTECTION: "0"
+    PLAYER_IDLE_TIMEOUT: "10"
+    ENABLE_COMMAND_BLOCK: "false"
+    SNOOPER_ENABLED: "false"
+
+    # Autopause
+    ENABLE_AUTOPAUSE: "true"
+    AUTOPAUSE_TIMEOUT_INIT: "1800"
+    AUTOPAUSE_TIMEOUT_EST: "600"
+    AUTOPAUSE_PERIOD: "300"
+
+    # Specs
+    MAX_TICK_TIME: -1
+    INIT_MEMORY: ${INIT_MEMORY}
+    MAX_MEMORY: ${MAX_MEMORY}
+
+    # RCON
+    ENABLE_RCON: ${ENABLE_RCON}
+    RCON_PASSWORD: ${RCON_PASSWORD}
+    RCON_PORT: ${RCON_PORT}
+
+    # Debug
+    DEBUG_EXEC: "false"
+    DEBUG_AUTOPAUSE: "false"
+    DEBUG_MEMORY: "false"
+
+    # ENV settings
+    ENV_VARIABLE_PREFIX: ""
+    REPLACE_ENV_IN_PLACE: "true"
+    REPLACE_ENV_DURING_SYNC: "true"
+    OVERRIDE_SERVER_PROPERTIES: "true"
+
 services:
-  mc:
-    container_name: ${NAME:-minecraft_server}
-    image: itzg/minecraft-server
-    environment:
-      EULA: "true"
-      ENABLE_ROLLING_LOGS: "true"
+  minecraft:
+    <<: *server
+    container_name: ${SERVER_NAME}
+    image: itzg/minecraft-server:java21
+    restart: on-failure
     env_file:
-      - ${ENV_FILE:-.env}
+      - .env
     ports:
-      - "${PORT:-25565}:25565"
+      - ${PORT}:25565
     volumes:
-      - ${DATADIR:-data}:/data
-      - ./plugins:/plugins
-      - ./config:/config
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "20m"
-        max-file: "5"
-        compress: "true"
-        mode: "non-blocking"
-        tag: "{{.Name}}"
-    stdin_open: true
-    tty: true
-    restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          cpus: ${CPUS:-3}
-    ulimits:
-      nofile:
-        soft: 65536
-        hard: 65536
+      - ${DATADIR}:/data
+      - ./downloads:/downloads
+    environment:
+      <<: *env
+      VERSION: ${VERSION}
+      SERVER_NAME: ${SERVER_NAME}
+      TYPE: ${TYPE}
+      GENERIC_PACK: "/downloads/${MODPACK_NAME}.zip"
+      USE_MODPACK_START_SCRIPT: "false"
+      REMOVE_OLD_MODS: "false"
+      SKIP_GENERIC_PACK_UPDATE_CHECK: "true"
+
+volumes:
+  data:
+    driver: local
+  downloads:
+    driver: local
