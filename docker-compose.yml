@@ -43,6 +43,14 @@ x-server: &server
     REPLACE_ENV_IN_PLACE: "true"
     REPLACE_ENV_DURING_SYNC: "true"
     OVERRIDE_SERVER_PROPERTIES: "true"
+  deploy:
+      resources:
+        limits:
+          cpus: ${CPUS}
+  ulimits:
+    nofile:
+      soft: 65536
+      hard: 65536
 
 services:
   minecraft:
@@ -62,7 +70,6 @@ services:
       VERSION: ${VERSION}
       SERVER_NAME: ${SERVER_NAME}
       TYPE: ${TYPE}
-
 volumes:
   data:
     driver: local

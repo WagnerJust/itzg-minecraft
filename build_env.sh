@@ -23,10 +23,10 @@ OPS_LIST=""
 CF_API_KEY=""
 CF_PAGE_URL=""
 CF_FILENAME_MATCHER=""
+CPUS=""
 
-# Get user inputs with validation
-read -p "Enter Java version (default is 21): " JAVA_VERSION
-JAVA_VERSION=${JAVA_VERSION:-"21"}
+read -p "Enter number of CPUs to use (default is 3): " CPUS
+CPUS=${CPUS:-"3"}
 
 read -p "Enter initial memory allocation (default is 2G): " INIT_MEMORY
 INIT_MEMORY=${INIT_MEMORY:-"2G"}
@@ -51,8 +51,12 @@ if [ ! -z "$VERSION" ]; then
     fi
 fi
 
-read -p "Enter server type (VANILLA, FORGE, FABRIC, NEOFORGE, FTBA, AUTO_CURSEFORGE default is VANILLA): " TYPE
-TYPE=${TYPE:-"VANILLA"}
+# Get user inputs with validation
+read -p "Enter Java version (default is 21): " JAVA_VERSION
+JAVA_VERSION=${JAVA_VERSION:-"21"}
+
+read -p "Enter server type (VANILLA, FORGE, FABRIC, PAPER, NEOFORGE, FTBA, AUTO_CURSEFORGE default is PAPER): " TYPE
+TYPE=${TYPE:-"PAPER"}
 
 # Add FTB-specific handling
 FTB_MODPACK_ID=""
@@ -185,6 +189,7 @@ CF_FILENAME_MATCHER=$CF_FILENAME_MATCHER
 FTB_MODPACK_ID=$FTB_MODPACK_ID
 FTB_MODPACK_VERSION_ID=$FTB_MODPACK_VERSION_ID
 FTB_FORCE_REINSTALL=$FTB_FORCE_REINSTALL
+CPUS=$CPUS
 EOL
 
 # Add modpack-specific variables only for FORGE, FABRIC, or NEOFORGE
