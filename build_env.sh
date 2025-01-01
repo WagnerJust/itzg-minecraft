@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Get real user's home directory even when running with sudo
+if [ ! -z "$SUDO_USER" ]; then
+    REAL_HOME=$(getent passwd "$SUDO_USER" | cut -d: -f6)
+else
+    REAL_HOME=$HOME
+fi
+
 # Initialize variables
 INIT_MEMORY=""
 MAX_MEMORY=""
@@ -92,7 +99,7 @@ if [[ "$TYPE" == "FORGE" || "$TYPE" == "FABRIC" || "$TYPE" == "NEOFORGE" ]]; the
             # Only expand if path starts with ~
             EXPANDED_PATH="$MODPACK_INPUT"
             if [[ "$MODPACK_INPUT" =~ ^~ ]]; then
-                EXPANDED_PATH="${MODPACK_INPUT/#\~/$HOME}"
+                EXPANDED_PATH="${MODPACK_INPUT/#\~/$REAL_HOME}"
             fi
             
             if [ ! -f "$EXPANDED_PATH" ]; then
