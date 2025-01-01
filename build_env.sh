@@ -51,8 +51,32 @@ if [ ! -z "$VERSION" ]; then
     fi
 fi
 
-read -p "Enter server type (VANILLA, FORGE, FABRIC, NEOFORGE, AUTO_CURSEFORGE default is VANILLA): " TYPE
+read -p "Enter server type (VANILLA, FORGE, FABRIC, NEOFORGE, FTBA, AUTO_CURSEFORGE default is VANILLA): " TYPE
 TYPE=${TYPE:-"VANILLA"}
+
+# Add FTB-specific handling
+FTB_MODPACK_ID=""
+FTB_MODPACK_VERSION_ID=""
+FTB_FORCE_REINSTALL="false"
+
+if [ "$TYPE" == "FTBA" ]; then
+    read -p "Enter FTB Modpack ID (required): " FTB_MODPACK_ID
+    while [ -z "$FTB_MODPACK_ID" ] || ! [[ "$FTB_MODPACK_ID" =~ ^[0-9]+$ ]]; do
+        echo "FTB Modpack ID is required and must be a number"
+        read -p "Enter FTB Modpack ID: " FTB_MODPACK_ID
+    done
+
+    read -p "Enter FTB Modpack Version ID (optional, press enter for latest): " FTB_MODPACK_VERSION_ID
+    if [ ! -z "$FTB_MODPACK_VERSION_ID" ] && ! [[ "$FTB_MODPACK_VERSION_ID" =~ ^[0-9]+$ ]]; then
+        echo "FTB Modpack Version ID must be a number if specified"
+        exit 1
+    fi
+
+    read -p "Force reinstall FTB? (yes/no, default: no): " FTB_FORCE_REINSTALL_INPUT
+    if [[ "${FTB_FORCE_REINSTALL_INPUT,,}" == "yes" ]]; then
+        FTB_FORCE_REINSTALL="true"
+    fi
+fi
 
 if [ "$TYPE" == "AUTO_CURSEFORGE" ]; then
     read -p "Enter CurseForge API Key: " CF_API_KEY
@@ -158,6 +182,9 @@ OPS_LIST=$OPS_LIST
 CF_API_KEY='$CF_API_KEY'
 CF_PAGE_URL=$CF_PAGE_URL
 CF_FILENAME_MATCHER=$CF_FILENAME_MATCHER
+FTB_MODPACK_ID=$FTB_MODPACK_ID
+FTB_MODPACK_VERSION_ID=$FTB_MODPACK_VERSION_ID
+FTB_FORCE_REINSTALL=$FTB_FORCE_REINSTALL
 EOL
 
 # Add modpack-specific variables only for FORGE, FABRIC, or NEOFORGE
