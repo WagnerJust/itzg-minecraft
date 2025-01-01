@@ -67,20 +67,19 @@ fi
 MODPACK_URL=""
 MODPACK_NAME=""
 MODPACK_PATH=""
-
 if [[ "$TYPE" == "FORGE" || "$TYPE" == "FABRIC" || "$TYPE" == "NEOFORGE" ]]; then
     read -p "Enter Modpack path (local path) or URL: " MODPACK_INPUT
     if [ ! -z "$MODPACK_INPUT" ]; then
         mkdir -p downloads
+        read -p "Enter Modpack name: " MODPACK_NAME
+        while [ -z "$MODPACK_NAME" ]; do
+            echo "Modpack name is required"
+            read -p "Enter Modpack name: " MODPACK_NAME
+        done
+
         # Check if input is a URL or local path
         if [[ "$MODPACK_INPUT" =~ ^https?:// ]]; then
             # Handle URL
-            read -p "Enter Modpack name: " MODPACK_NAME
-            while [ -z "$MODPACK_NAME" ]; do
-                echo "Modpack name is required when URL is provided"
-                read -p "Enter Modpack name: " MODPACK_NAME
-            done
-            
             echo "Downloading modpack to downloads/${MODPACK_NAME}.zip"
             curl -L -o "downloads/${MODPACK_NAME}.zip" "$MODPACK_INPUT"
             if file "downloads/${MODPACK_NAME}.zip" | grep -q "HTML"; then
@@ -94,16 +93,16 @@ if [[ "$TYPE" == "FORGE" || "$TYPE" == "FABRIC" || "$TYPE" == "NEOFORGE" ]]; the
                 echo "Local file does not exist: $MODPACK_INPUT"
                 exit 1
             fi
-            # Extract filename from path and copy to downloads
-            read -p "Enter Modpack name: " MODPACK_NAME
-            while [ -z "$MODPACK_NAME" ]; do
-                echo "Modpack name is required"
-                read -p "Enter Modpack name: " MODPACK_NAME
-            done
             echo "Copying modpack to downloads/$MODPACK_NAME"
-            cp -r "$MODPACK_INPUT" "downloads/$MODPACK_NAME"
+            cp "$MODPACK_INPUT" "downloads/$MODPACK_NAME"
         fi
-        MODPACK_PATH="/downloads/$MODPACK_NAME"
+
+        if ! zipinfo -t "downloads/${MODPACK_NAME}.zip" > /dev/null; then
+            echo "The downloaded file is not a valid zip file. Please check the URL and try again."
+            rm "downloads/${MODPACK_NAME}.zip"
+            exit 1
+        fi
+        MODPACK_PATH="downloads/$MODPACK_NAME"
     fi
 fi
 
@@ -150,4 +149,12 @@ USE_MODPACK_START_SCRIPT="false"
 REMOVE_OLD_MODS="false"
 SKIP_GENERIC_PACK_UPDATE_CHECK="true"
 EOL
+fi
+
+# Allow additional environment variables
+read -p "Enter additional environment variables (format: VAR1=value1 VAR2=value2): " ADDITIONAL_VARS
+if [ ! -z "$ADDITIONAL_VARS" ]; then
+    echo "" >> .env  # Add blank line for readability
+    echo "# Additional custom variables" >> .env
+    echo "$ADDITIONAL_VARS" | tr ' ' '\n' >> .env
 fi
