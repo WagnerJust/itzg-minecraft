@@ -89,12 +89,18 @@ if [[ "$TYPE" == "FORGE" || "$TYPE" == "FABRIC" || "$TYPE" == "NEOFORGE" ]]; the
             fi
         else
             # Handle local path
-            if [ ! -f "$MODPACK_INPUT" ]; then
-                echo "Local file does not exist: $MODPACK_INPUT"
+            # Only expand if path starts with ~
+            EXPANDED_PATH="$MODPACK_INPUT"
+            if [[ "$MODPACK_INPUT" =~ ^~ ]]; then
+                EXPANDED_PATH="${MODPACK_INPUT/#\~/$HOME}"
+            fi
+            
+            if [ ! -f "$EXPANDED_PATH" ]; then
+                echo "Local file does not exist: $EXPANDED_PATH"
                 exit 1
             fi
             echo "Copying modpack to downloads/$MODPACK_NAME"
-            cp "$MODPACK_INPUT" "downloads/$MODPACK_NAME"
+            cp "$EXPANDED_PATH" "downloads/$MODPACK_NAME"
         fi
 
         if ! zipinfo -t "downloads/${MODPACK_NAME}.zip" > /dev/null; then
