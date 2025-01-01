@@ -95,7 +95,11 @@ if [[ "$TYPE" == "FORGE" || "$TYPE" == "FABRIC" || "$TYPE" == "NEOFORGE" ]]; the
                 exit 1
             fi
             # Extract filename from path and copy to downloads
-            MODPACK_NAME=$(basename "$MODPACK_INPUT")
+            read -p "Enter Modpack name: " MODPACK_NAME
+            while [ -z "$MODPACK_NAME" ]; do
+                echo "Modpack name is required"
+                read -p "Enter Modpack name: " MODPACK_NAME
+            done
             echo "Copying modpack to downloads/$MODPACK_NAME"
             cp -r "$MODPACK_INPUT" "downloads/$MODPACK_NAME"
         fi
