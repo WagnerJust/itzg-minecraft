@@ -106,7 +106,7 @@ if [[ "$TYPE" == "FORGE" || "$TYPE" == "FABRIC" || "$TYPE" == "NEOFORGE" ]]; the
                 echo "Local file does not exist: $EXPANDED_PATH"
                 exit 1
             fi
-            echo "Copying modpack to downloads/$MODPACK_NAME"
+            echo "Copying modpack to downloads/$MODPACK_NAME.zip"
             cp "$EXPANDED_PATH" "downloads/$MODPACK_NAME"
         fi
 
