@@ -147,6 +147,3 @@ REMOVE_OLD_MODS="false"
 SKIP_GENERIC_PACK_UPDATE_CHECK="true"
 EOL
 fi
-
-# Start the server
-docker compose up -d
