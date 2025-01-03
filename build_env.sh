@@ -58,6 +58,19 @@ JAVA_VERSION=${JAVA_VERSION:-"21"}
 read -p "Enter server type (VANILLA, FORGE, FABRIC, PAPER, NEOFORGE, FTBA, AUTO_CURSEFORGE default is PAPER): " TYPE
 TYPE=${TYPE:-"PAPER"}
 
+# Add Bedrock support option
+ENABLE_BEDROCK=""
+BEDROCK_PORT=""
+
+if [[ "$TYPE" == "PAPER" ]]; then
+    read -p "Enable Bedrock support? (yes/no, default: no): " ENABLE_BEDROCK_INPUT
+    if [[ "${ENABLE_BEDROCK_INPUT,,}" == "yes" ]]; then
+        ENABLE_BEDROCK="true"
+        read -p "Enter Bedrock port number (default is 19132): " BEDROCK_PORT
+        BEDROCK_PORT=${BEDROCK_PORT:-"19132"}
+    fi
+fi
+
 # Add FTB-specific handling
 FTB_MODPACK_ID=""
 FTB_MODPACK_VERSION_ID=""
@@ -191,6 +204,16 @@ FTB_MODPACK_VERSION_ID=$FTB_MODPACK_VERSION_ID
 FTB_FORCE_REINSTALL=$FTB_FORCE_REINSTALL
 CPUS=$CPUS
 EOL
+
+# Add Bedrock-specific variables if enabled
+if [ "$ENABLE_BEDROCK" == "true" ]; then
+    cat >> .env << EOL
+PLUGINS=|
+  https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot
+  https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot
+BEDROCK_PORT=$BEDROCK_PORT
+EOL
+fi
 
 # Add modpack-specific variables only for FORGE, FABRIC, or NEOFORGE
 if [[ "$TYPE" == "FORGE" || "$TYPE" == "FABRIC" || "$TYPE" == "NEOFORGE" ]]; then
