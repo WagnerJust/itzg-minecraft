@@ -186,7 +186,6 @@ read -p "Enter operator usernames (comma-separated, press enter to skip): " OPS_
 
 # Remove existing .env file if it exists
 rm -f .env
-
 # Create .env file
 cat > .env << EOL
 INIT_MEMORY=$INIT_MEMORY
@@ -194,14 +193,27 @@ MAX_MEMORY=$MAX_MEMORY
 PORT=$PORT
 DATADIR=$DATADIR
 SERVER_NAME=$SERVER_NAME
-VERSION=${VERSION}
+EOL
+
+# Only add VERSION if it's not empty
+if [ ! -z "$VERSION" ]; then
+    echo "VERSION=$VERSION" >> .env
+fi
+
+# Only add JAVA_VERSION if it's not empty
+if [ ! -z "$JAVA_VERSION" ]; then
+    JAVA_VERSION=":java${JAVA_VERSION}"
+    echo "JAVA_VERSION=$JAVA_VERSION" >> .env
+fi
+
+# Continue with the rest of the .env file
+cat >> .env << EOL
 TYPE=$TYPE
-JAVA_VERSION=${JAVA_VERSION}
 ENABLE_RCON=$ENABLE_RCON
 RCON_PASSWORD=$RCON_PASSWORD
 RCON_PORT=$RCON_PORT
 OPS_LIST=$OPS_LIST
-CF_API_KEY='$CF_API_KEY'
+CF_API_KEY=$CF_API_KEY
 CF_PAGE_URL=$CF_PAGE_URL
 CF_FILENAME_MATCHER=$CF_FILENAME_MATCHER
 FTB_MODPACK_ID=$FTB_MODPACK_ID
