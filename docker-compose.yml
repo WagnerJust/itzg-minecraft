@@ -56,7 +56,7 @@ services:
   minecraft:
     <<: *server
     container_name: ${SERVER_NAME}
-    image: itzg/minecraft-server:java${JAVA_VERSION}
+    image: itzg/minecraft-server${JAVA_VERSION:+:java${JAVA_VERSION}}
     restart: on-failure
     env_file:
       - .env

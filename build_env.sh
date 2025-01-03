@@ -52,8 +52,13 @@ if [ ! -z "$VERSION" ]; then
 fi
 
 # Get user inputs with validation
-read -p "Enter Java version (default is 21): " JAVA_VERSION
-JAVA_VERSION=${JAVA_VERSION:-"21"}
+read -p "Enter Java version (press enter for latest, or enter version like 8, 11, 17, 21): " JAVA_VERSION
+if [ ! -z "$JAVA_VERSION" ]; then
+    if ! [[ "$JAVA_VERSION" =~ ^[0-9]+$ ]]; then
+        echo "Invalid Java version. Please use a number (e.g., 8, 11, 17, 21)"
+        exit 1
+    fi
+fi
 
 read -p "Enter server type (VANILLA, FORGE, FABRIC, PAPER, NEOFORGE, FTBA, AUTO_CURSEFORGE default is PAPER): " TYPE
 TYPE=${TYPE:-"PAPER"}
@@ -191,7 +196,7 @@ DATADIR=$DATADIR
 SERVER_NAME=$SERVER_NAME
 VERSION=${VERSION}
 TYPE=$TYPE
-JAVA_VERSION=$JAVA_VERSION
+JAVA_VERSION=${JAVA_VERSION}
 ENABLE_RCON=$ENABLE_RCON
 RCON_PASSWORD=$RCON_PASSWORD
 RCON_PORT=$RCON_PORT
