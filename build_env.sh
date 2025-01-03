@@ -43,10 +43,11 @@ DATADIR=${DATADIR:-"~/Minecraft/data"}
 read -p "Enter server name (default is MinecraftServer): " SERVER_NAME
 SERVER_NAME=${SERVER_NAME:-"MinecraftServer"}
 
-read -p "Enter Minecraft version (format: x.xx or x.xx.x, press enter for latest): " VERSION
+read -p "Enter Minecraft version (format: x.xx or x.xx.x, default is LATEST): " VERSION
+VERSION=${VERSION:-"LATEST"}
 if [ ! -z "$VERSION" ]; then
-    if [[ ! $VERSION =~ ^[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]; then
-        echo "Invalid version format. Use x.xx or x.xx.x (e.g., 1.19 or 1.19.2)"
+    if [[ ! $VERSION =~ ^[0-9]+\.[0-9]+(\.[0-9]+)?$ && "$VERSION" != "LATEST" ]]; then
+        echo "Invalid version format. Use x.xx or x.xx.x (e.g., 1.19 or 1.19.2) or LATEST (default)"
         exit 1
     fi
 fi
@@ -194,11 +195,6 @@ PORT=$PORT
 DATADIR=$DATADIR
 SERVER_NAME=$SERVER_NAME
 EOL
-
-# Only add VERSION if it's not empty
-if [ ! -z "$VERSION" ]; then
-    echo "VERSION=$VERSION" >> .env
-fi
 
 # Only add JAVA_VERSION if it's not empty
 if [ ! -z "$JAVA_VERSION" ]; then
