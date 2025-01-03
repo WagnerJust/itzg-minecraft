@@ -204,6 +204,7 @@ fi
 
 # Continue with the rest of the .env file
 cat >> .env << EOL
+VERSION=$VERSION
 TYPE=$TYPE
 ENABLE_RCON=$ENABLE_RCON
 RCON_PASSWORD=$RCON_PASSWORD
