@@ -194,6 +194,7 @@ MAX_MEMORY=$MAX_MEMORY
 PORT=$PORT
 DATADIR=$DATADIR
 SERVER_NAME=$SERVER_NAME
+BEDROCK_PORT=$BEDROCK_PORT
 EOL
 
 # Only add JAVA_VERSION if it's not empty
@@ -225,7 +226,6 @@ EOL
 if [ "$ENABLE_BEDROCK" == "true" ]; then
     cat >> .env << EOL
 PLUGINS=https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot, https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot
-BEDROCK_PORT=$BEDROCK_PORT
 EOL
 fi
 
