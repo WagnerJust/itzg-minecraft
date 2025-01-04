@@ -61,8 +61,8 @@ services:
     env_file:
       - .env
     ports:
-      - ${PORT}:25565
-      - ${BEDROCK_PORT:+${BEDROCK_PORT}:19132/udp}
+      - "0.0.0.0:${PORT}:25565"
+      - "0.0.0.0:${BEDROCK_PORT:+${BEDROCK_PORT}}:19132/udp"
     volumes:
       - ${DATADIR}:/data
       - ./downloads:/data/downloads
@@ -71,8 +71,17 @@ services:
       VERSION: ${VERSION}
       SERVER_NAME: ${SERVER_NAME}
       TYPE: ${TYPE}
+    networks:
+      - minecraft_net
 volumes:
   data:
     driver: local
   downloads:
     driver: local
+
+networks:
+  minecraft_net:
+    driver: bridge
+    enable_ipv6: true
+    driver_opts:
+      com.docker.network.bridge.name: br_minecraft
