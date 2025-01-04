@@ -200,6 +200,8 @@ EOL
 if [ ! -z "$JAVA_VERSION" ]; then
     JAVA_VERSION=":java${JAVA_VERSION}"
     echo "JAVA_VERSION=$JAVA_VERSION" >> .env
+else
+    echo "JAVA_VERSION=$JAVA_VERSION" >> .env
 fi
 
 # Continue with the rest of the .env file
@@ -222,9 +224,7 @@ EOL
 # Add Bedrock-specific variables if enabled
 if [ "$ENABLE_BEDROCK" == "true" ]; then
     cat >> .env << EOL
-PLUGINS=|
-  https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot
-  https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot
+PLUGINS=https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot, https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot
 BEDROCK_PORT=$BEDROCK_PORT
 EOL
 fi
