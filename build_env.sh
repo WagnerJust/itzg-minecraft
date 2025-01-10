@@ -69,7 +69,7 @@ fi
 if [ -z "$JAVA_VERSION" ]; then
     read -p "Enter Java version (default is 21, or enter version like 8, 11, 17): " JAVA_VERSION
     JAVA_VERSION=${JAVA_VERSION:-"21"}
-    JAVA_VERSION=java${JAVA_VERSION}
+    JAVA_VERSION=:java${JAVA_VERSION}
     if ! [[ "$JAVA_VERSION" =~ ^[0-9]+$ ]]; then
         echo "Invalid Java version. Please use a number (e.g., 8, 11, 17, 21)"
         exit 1
