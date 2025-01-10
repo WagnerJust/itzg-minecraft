@@ -7,61 +7,76 @@ else
     REAL_HOME=$HOME
 fi
 
-# Initialize variables
-INIT_MEMORY=""
-MAX_MEMORY=""
-PORT=""
-DATADIR=""
-SERVER_NAME=""
-VERSION=""
-TYPE=""
-JAVA_VERSION=""
-ENABLE_RCON=""
-RCON_PASSWORD=""
-RCON_PORT=""
-OPS_LIST=""
-CF_API_KEY=""
-CF_PAGE_URL=""
-CF_FILENAME_MATCHER=""
-CPUS=""
+# Function to read existing value from .env file
+get_env_value() {
+    local var_name=$1
+    if [ -f .env ]; then
+        grep "^${var_name}=" .env | cut -d '=' -f2-
+    fi
+}
 
-read -p "Enter number of CPUs to use (default is 3): " CPUS
+# Initialize variables with existing values if .env exists
+INIT_MEMORY=$(get_env_value "INIT_MEMORY")
+MAX_MEMORY=$(get_env_value "MAX_MEMORY")
+PORT=$(get_env_value "PORT")
+DATADIR=$(get_env_value "DATADIR")
+SERVER_NAME=$(get_env_value "SERVER_NAME")
+VERSION=$(get_env_value "VERSION")
+TYPE=$(get_env_value "TYPE")
+JAVA_VERSION=$(get_env_value "JAVA_VERSION")
+ENABLE_RCON=$(get_env_value "ENABLE_RCON")
+RCON_PASSWORD=$(get_env_value "RCON_PASSWORD")
+RCON_PORT=$(get_env_value "RCON_PORT")
+OPS_LIST=$(get_env_value "OPS_LIST")
+CF_API_KEY=$(get_env_value "CF_API_KEY")
+CF_PAGE_URL=$(get_env_value "CF_PAGE_URL")
+CF_FILENAME_MATCHER=$(get_env_value "CF_FILENAME_MATCHER")
+CPUS=$(get_env_value "CPUS")
+FTB_MODPACK_ID=$(get_env_value "FTB_MODPACK_ID")
+FTB_MODPACK_VERSION_ID=$(get_env_value "FTB_MODPACK_VERSION_ID")
+FTB_FORCE_REINSTALL=$(get_env_value "FTB_FORCE_REINSTALL")
+
+# Only prompt for values that aren't already set
+[ -z "$CPUS" ] && read -p "Enter number of CPUs to use (default is 3): " CPUS
 CPUS=${CPUS:-"3"}
 
-read -p "Enter initial memory allocation (default is 2G): " INIT_MEMORY
+[ -z "$INIT_MEMORY" ] && read -p "Enter initial memory allocation (default is 2G): " INIT_MEMORY
 INIT_MEMORY=${INIT_MEMORY:-"2G"}
 
-read -p "Enter maximum memory allocation (default is 4G): " MAX_MEMORY
+[ -z "$MAX_MEMORY" ] && read -p "Enter maximum memory allocation (default is 4G): " MAX_MEMORY
 MAX_MEMORY=${MAX_MEMORY:-"4G"}
 
-read -p "Enter port number (default is 25565): " PORT
+[ -z "$PORT" ] && read -p "Enter port number (default is 25565): " PORT
 PORT=${PORT:-"25565"}
 
-read -p "Enter data directory (default is ~/Minecraft/data): " DATADIR
+[ -z "$DATADIR" ] && read -p "Enter data directory (default is ~/Minecraft/data): " DATADIR
 DATADIR=${DATADIR:-"~/Minecraft/data"}
 
-read -p "Enter server name (default is MinecraftServer): " SERVER_NAME
+[ -z "$SERVER_NAME" ] && read -p "Enter server name (default is MinecraftServer): " SERVER_NAME
 SERVER_NAME=${SERVER_NAME:-"MinecraftServer"}
 
-read -p "Enter Minecraft version (format: x.xx or x.xx.x, default is LATEST): " VERSION
+[ -z "$VERSION" ] && read -p "Enter Minecraft version (format: x.xx or x.xx.x, default is LATEST): " VERSION
 VERSION=${VERSION:-"LATEST"}
-if [ ! -z "$VERSION" ]; then
+
+if [ -z "$VERSION" ] || [ "$VERSION" != "$(get_env_value "VERSION")" ]; then
     if [[ ! $VERSION =~ ^[0-9]+\.[0-9]+(\.[0-9]+)?$ && "$VERSION" != "LATEST" ]]; then
-        echo "Invalid version format. Use x.xx or x.xx.x (e.g., 1.19 or 1.19.2) or LATEST (default)"
+        echo "Invalid version format. Use x.xx or x.xx.x (e.g., 1.19 or 1.19.2) or LATEST"
         exit 1
     fi
 fi
 
-# Get user inputs with validation
-read -p "Enter Java version (press enter for latest, or enter version like 8, 11, 17, 21): " JAVA_VERSION
-if [ ! -z "$JAVA_VERSION" ]; then
-    if ! [[ "$JAVA_VERSION" =~ ^[0-9]+$ ]]; then
-        echo "Invalid Java version. Please use a number (e.g., 8, 11, 17, 21)"
-        exit 1
+# Only prompt for Java version if not already set
+if [ -z "$JAVA_VERSION" ]; then
+    read -p "Enter Java version (press enter for latest, or enter version like 8, 11, 17, 21): " JAVA_VERSION
+    if [ ! -z "$JAVA_VERSION" ]; then
+        if ! [[ "$JAVA_VERSION" =~ ^[0-9]+$ ]]; then
+            echo "Invalid Java version. Please use a number (e.g., 8, 11, 17, 21)"
+            exit 1
+        fi
     fi
 fi
 
-read -p "Enter server type (VANILLA, FORGE, FABRIC, PAPER, NEOFORGE, FTBA, AUTO_CURSEFORGE default is PAPER): " TYPE
+[ -z "$TYPE" ] && read -p "Enter server type (VANILLA, FORGE, FABRIC, PAPER, NEOFORGE, FTBA, AUTO_CURSEFORGE default is PAPER): " TYPE
 TYPE=${TYPE:-"PAPER"}
 
 # Add Bedrock support option
@@ -171,44 +186,36 @@ if [[ "$TYPE" == "FORGE" || "$TYPE" == "FABRIC" || "$TYPE" == "NEOFORGE" ]]; the
     fi
 fi
 
-read -p "Enable RCON? (yes/no, default: no): " ENABLE_RCON_INPUT
-if [[ "${ENABLE_RCON_INPUT,,}" == "yes" ]]; then
-    ENABLE_RCON="true"
-    read -p "Enter RCON password: " RCON_PASSWORD
-    read -p "Enter RCON port (default 25575): " RCON_PORT
-    RCON_PORT=${RCON_PORT:-"25575"}
-else
-    ENABLE_RCON="false"
-    RCON_PASSWORD=""
-    RCON_PORT="25575"
+# Only prompt for RCON if not already configured
+if [ -z "$ENABLE_RCON" ]; then
+    read -p "Enable RCON? (yes/no, default: no): " ENABLE_RCON_INPUT
+    if [[ "${ENABLE_RCON_INPUT,,}" == "yes" ]]; then
+        ENABLE_RCON="true"
+        read -p "Enter RCON password: " RCON_PASSWORD
+        read -p "Enter RCON port (default 25575): " RCON_PORT
+        RCON_PORT=${RCON_PORT:-"25575"}
+    else
+        ENABLE_RCON="false"
+        RCON_PASSWORD=""
+        RCON_PORT="25575"
+    fi
 fi
 
-read -p "Enter operator usernames (comma-separated, press enter to skip): " OPS_LIST
+[ -z "$OPS_LIST" ] && read -p "Enter operator usernames (comma-separated, press enter to skip): " OPS_LIST
 
-# Remove existing .env file if it exists
-rm -f .env
-# Create .env file
-cat > .env << EOL
+# Create new .env file or update existing one
+touch .env.tmp
+
+# Write all variables to temporary file
+cat > .env.tmp << EOL
 INIT_MEMORY=$INIT_MEMORY
 MAX_MEMORY=$MAX_MEMORY
 PORT=$PORT
 DATADIR=$DATADIR
 SERVER_NAME=$SERVER_NAME
-BEDROCK_PORT=$BEDROCK_PORT
-EOL
-
-# Only add JAVA_VERSION if it's not empty
-if [ ! -z "$JAVA_VERSION" ]; then
-    JAVA_VERSION=":java${JAVA_VERSION}"
-    echo "JAVA_VERSION=$JAVA_VERSION" >> .env
-else
-    echo "JAVA_VERSION=$JAVA_VERSION" >> .env
-fi
-
-# Continue with the rest of the .env file
-cat >> .env << EOL
 VERSION=$VERSION
 TYPE=$TYPE
+JAVA_VERSION=$JAVA_VERSION
 ENABLE_RCON=$ENABLE_RCON
 RCON_PASSWORD=$RCON_PASSWORD
 RCON_PORT=$RCON_PORT
@@ -221,6 +228,19 @@ FTB_MODPACK_VERSION_ID=$FTB_MODPACK_VERSION_ID
 FTB_FORCE_REINSTALL=$FTB_FORCE_REINSTALL
 CPUS=$CPUS
 EOL
+
+# Add any additional variables that might exist in the old .env but weren't processed above
+if [ -f .env ]; then
+    while IFS= read -r line; do
+        var_name=$(echo "$line" | cut -d'=' -f1)
+        if ! grep -q "^${var_name}=" .env.tmp; then
+            echo "$line" >> .env.tmp
+        fi
+    done < .env
+fi
+
+# Replace old .env with new one
+mv .env.tmp .env
 
 # Add Bedrock-specific variables if enabled
 if [ "$ENABLE_BEDROCK" == "true" ]; then
