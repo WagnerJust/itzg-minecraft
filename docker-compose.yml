@@ -9,7 +9,7 @@ x-server: &server
     EULA: "true"
     OPS: ${OPS_LIST}
     DIFFICULTY: "normal"
-    MAX_PLAYERS: "3"
+    MAX_PLAYERS: "10"
     VIEW_DISTANCE: "6"
     SIMULATION-DISTANCE: "6"
     SPAWN_PROTECTION: "0"
@@ -62,7 +62,6 @@ services:
       - .env
     ports:
       - ${PORT}:25565
-      - ${BEDROCK_PORT:+${BEDROCK_PORT}:19132/udp}
     volumes:
       - ${DATADIR}:/data
       - ./downloads:/data/downloads

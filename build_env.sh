@@ -245,6 +245,7 @@ mv .env.tmp .env
 # Add Bedrock-specific variables if enabled
 if [ "$ENABLE_BEDROCK" == "true" ]; then
     cat >> .env << EOL
+BEDROCK_PORT=${BEDROCK_PORT}
 PLUGINS=https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot, https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot, https://hangarcdn.papermc.io/plugins/ViaVersion/ViaVersion/versions/5.2.1/PAPER/ViaVersion-5.2.1.jar
 EOL
 fi
