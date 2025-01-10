@@ -16,6 +16,8 @@ x-server: &server
     PLAYER_IDLE_TIMEOUT: "10"
     ENABLE_COMMAND_BLOCK: "false"
     SNOOPER_ENABLED: "false"
+    USE_AIKAR_FLAGS: "true"
+    JVM_OPTS: "-Xlog:gc*:logs/gc.log:time,uptime:filecount=5,filesize=1M"
 
     # Autopause
     ENABLE_AUTOPAUSE: "true"
