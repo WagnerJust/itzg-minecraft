@@ -67,6 +67,7 @@ services:
     volumes:
       - ${DATADIR}:/data
       - ./downloads:/data/downloads
+      - ./logs:/data/logs
     environment:
       <<: *env
       VERSION: ${VERSION}
