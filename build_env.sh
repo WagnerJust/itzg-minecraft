@@ -143,6 +143,31 @@ MODPACK_URL=""
 MODPACK_NAME=""
 MODPACK_PATH=""
 if [[ "$TYPE" == "FORGE" || "$TYPE" == "FABRIC" || "$TYPE" == "NEOFORGE" ]]; then
+    # Get version for the specific mod loader
+    case "$TYPE" in
+        "FORGE")
+            read -p "Enter Forge version (e.g., 47.1.0): " FORGE_VERSION
+            while [ -z "$FORGE_VERSION" ]; do
+                echo "Forge version is required"
+                read -p "Enter Forge version: " FORGE_VERSION
+            done
+            ;;
+        "NEOFORGE")
+            read -p "Enter NeoForge version (e.g., 20.2.86): " NEOFORGE_VERSION
+            while [ -z "$NEOFORGE_VERSION" ]; do
+                echo "NeoForge version is required"
+                read -p "Enter NeoForge version: " NEOFORGE_VERSION
+            done
+            ;;
+        "FABRIC")
+            read -p "Enter Fabric Loader version (e.g., 0.14.21): " FABRIC_VERSION
+            while [ -z "$FABRIC_VERSION" ]; do
+                echo "Fabric version is required"
+                read -p "Enter Fabric version: " FABRIC_VERSION
+            done
+            ;;
+    esac
+
     read -p "Enter Modpack path (local path) or URL: " MODPACK_INPUT
     if [ ! -z "$MODPACK_INPUT" ]; then
         mkdir -p downloads
