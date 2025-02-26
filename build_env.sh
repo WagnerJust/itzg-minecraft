@@ -130,12 +130,6 @@ if [ "$TYPE" == "AUTO_CURSEFORGE" ]; then
         echo "CurseForge Project Page URL is required"
         read -p "Enter CurseForge Project Page URL: " CF_PAGE_URL
     done
-
-    read -p "Enter filename matcher pattern (e.g., 'server'): " CF_FILENAME_MATCHER
-    while [ -z "$CF_FILENAME_MATCHER" ]; do
-        echo "Filename matcher pattern is required"
-        read -p "Enter filename matcher pattern: " CF_FILENAME_MATCHER
-    done
 fi
 
 # Add modpack handling
@@ -151,6 +145,7 @@ if [[ "$TYPE" == "FORGE" || "$TYPE" == "FABRIC" || "$TYPE" == "NEOFORGE" ]]; the
                 echo "Forge version is required"
                 read -p "Enter Forge version: " FORGE_VERSION
             done
+            echo "FORGE_VERSION=$FORGE_VERSION" >> .env.tmp
             ;;
         "NEOFORGE")
             read -p "Enter NeoForge version (e.g., 20.2.86): " NEOFORGE_VERSION
@@ -158,6 +153,7 @@ if [[ "$TYPE" == "FORGE" || "$TYPE" == "FABRIC" || "$TYPE" == "NEOFORGE" ]]; the
                 echo "NeoForge version is required"
                 read -p "Enter NeoForge version: " NEOFORGE_VERSION
             done
+            echo "NEOFORGE_VERSION=$NEOFORGE_VERSION" >> .env.tmp
             ;;
         "FABRIC")
             read -p "Enter Fabric Loader version (e.g., 0.14.21): " FABRIC_VERSION
@@ -165,6 +161,7 @@ if [[ "$TYPE" == "FORGE" || "$TYPE" == "FABRIC" || "$TYPE" == "NEOFORGE" ]]; the
                 echo "Fabric version is required"
                 read -p "Enter Fabric version: " FABRIC_VERSION
             done
+            echo "FABRIC_VERSION=$FABRIC_VERSION" >> .env.tmp
             ;;
     esac
 
