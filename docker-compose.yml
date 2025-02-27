@@ -13,14 +13,14 @@ x-server: &server
     VIEW_DISTANCE: "6"
     SIMULATION-DISTANCE: "6"
     SPAWN_PROTECTION: "0"
-    PLAYER_IDLE_TIMEOUT: "10"
+    PLAYER_IDLE_TIMEOUT: "0"
     ENABLE_COMMAND_BLOCK: "false"
     SNOOPER_ENABLED: "false"
     USE_AIKAR_FLAGS: "true"
     JVM_OPTS: "-Xlog:gc*:logs/gc.log:time,uptime:filecount=5,filesize=1M"
 
     # Autopause
-    ENABLE_AUTOPAUSE: "true"
+    ENABLE_AUTOPAUSE: "false"
     AUTOPAUSE_TIMEOUT_INIT: "1800"
     AUTOPAUSE_TIMEOUT_EST: "600"
     AUTOPAUSE_PERIOD: "300"

@@ -251,6 +251,7 @@ FTB_MODPACK_ID=$FTB_MODPACK_ID
 FTB_MODPACK_VERSION_ID=$FTB_MODPACK_VERSION_ID
 FTB_FORCE_REINSTALL=$FTB_FORCE_REINSTALL
 CPUS=$CPUS
+ALLOW_FLIGHT="true"
 EOL
 
 # Add any additional variables that might exist in the old .env but weren't processed above
