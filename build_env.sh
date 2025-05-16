@@ -125,10 +125,10 @@ if [ "$TYPE" == "AUTO_CURSEFORGE" ]; then
         read -p "Enter CurseForge API Key: " CF_API_KEY
     done
 
-    read -p "Enter CurseForge Project Page URL: " CF_PAGE_URL
+    read -p "Enter CurseForge modpack URL (direct file URL): " CF_PAGE_URL
     while [ -z "$CF_PAGE_URL" ]; do
-        echo "CurseForge Project Page URL is required"
-        read -p "Enter CurseForge Project Page URL: " CF_PAGE_URL
+        echo "CurseForge modpack URL is required"
+        read -p "Enter CurseForge modpack URL: " CF_PAGE_URL
     done
 fi
 
@@ -246,10 +246,7 @@ RCON_PORT=$RCON_PORT
 OPS_LIST=$OPS_LIST
 CF_API_KEY=$CF_API_KEY
 CF_PAGE_URL=$CF_PAGE_URL
-CF_FILENAME_MATCHER=$CF_FILENAME_MATCHER
-FTB_MODPACK_ID=$FTB_MODPACK_ID
-FTB_MODPACK_VERSION_ID=$FTB_MODPACK_VERSION_ID
-FTB_FORCE_REINSTALL=$FTB_FORCE_REINSTALL
+CURSEFORGE_FILES=$CF_PAGE_URL
 CPUS=$CPUS
 ALLOW_FLIGHT="true"
 EOL

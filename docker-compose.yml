@@ -45,6 +45,11 @@ x-server: &server
     REPLACE_ENV_IN_PLACE: "true"
     REPLACE_ENV_DURING_SYNC: "true"
     OVERRIDE_SERVER_PROPERTIES: "true"
+
+    # CurseForge settings
+    CF_API_KEY: ${CF_API_KEY}
+    CURSEFORGE_FILES: ${CURSEFORGE_FILES}
+    
   deploy:
       resources:
         limits:
