@@ -156,12 +156,11 @@ if [[ "$TYPE" == "FORGE" || "$TYPE" == "FABRIC" || "$TYPE" == "NEOFORGE" ]]; the
             echo "NEOFORGE_VERSION=$NEOFORGE_VERSION" >> .env.tmp
             ;;
         "FABRIC")
-            read -p "Enter Fabric Loader version (e.g., 0.14.21): " FABRIC_VERSION
-            while [ -z "$FABRIC_VERSION" ]; do
-                echo "Fabric version is required"
-                read -p "Enter Fabric version: " FABRIC_VERSION
-            done
-            echo "FABRIC_VERSION=$FABRIC_VERSION" >> .env.tmp
+            read -p "Enter Fabric Launcher version (optional, press enter to skip): " FABRIC_LAUNCHER_VERSION
+            read -p "Enter Fabric Loader version (optional, press enter to skip): " FABRIC_LOADER_VERSION
+            
+            [ ! -z "$FABRIC_LAUNCHER_VERSION" ] && echo "FABRIC_LAUNCHER_VERSION=$FABRIC_LAUNCHER_VERSION" >> .env.tmp
+            [ ! -z "$FABRIC_LOADER_VERSION" ] && echo "FABRIC_LOADER_VERSION=$FABRIC_LOADER_VERSION" >> .env.tmp
             ;;
     esac
 
