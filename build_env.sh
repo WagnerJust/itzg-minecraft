@@ -37,14 +37,14 @@ FTB_MODPACK_VERSION_ID=$(get_env_value "FTB_MODPACK_VERSION_ID")
 FTB_FORCE_REINSTALL=$(get_env_value "FTB_FORCE_REINSTALL")
 
 # Only prompt for values that aren't already set
-[ -z "$CPUS" ] && read -p "Enter number of CPUs to use (default is 3): " CPUS
-CPUS=${CPUS:-"3"}
+[ -z "$CPUS" ] && read -p "Enter number of CPUs to use (default is 6): " CPUS
+CPUS=${CPUS:-"6"}
 
-[ -z "$INIT_MEMORY" ] && read -p "Enter initial memory allocation (default is 2G): " INIT_MEMORY
-INIT_MEMORY=${INIT_MEMORY:-"2G"}
+[ -z "$INIT_MEMORY" ] && read -p "Enter initial memory allocation (default is 8G): " INIT_MEMORY
+INIT_MEMORY=${INIT_MEMORY:-"8G"}
 
 [ -z "$MAX_MEMORY" ] && read -p "Enter maximum memory allocation (default is 4G): " MAX_MEMORY
-MAX_MEMORY=${MAX_MEMORY:-"4G"}
+MAX_MEMORY=${MAX_MEMORY:-"10G"}
 
 [ -z "$PORT" ] && read -p "Enter port number (default is 25565): " PORT
 PORT=${PORT:-"25565"}
