@@ -186,15 +186,14 @@ if [[ "$TYPE" == "FORGE" || "$TYPE" == "FABRIC" || "$TYPE" == "NEOFORGE" ]]; the
                 exit 1
             fi
         else
-            # Handle local path
-            # Only expand if path starts with ~
+            # Handle local path - preserve original style but expand for checking
             EXPANDED_PATH="$MODPACK_INPUT"
             if [[ "$MODPACK_INPUT" =~ ^~ ]]; then
                 EXPANDED_PATH="${MODPACK_INPUT/#\~/$REAL_HOME}"
             fi
             
             if [ ! -f "$EXPANDED_PATH" ]; then
-                echo "Local file does not exist: $EXPANDED_PATH"
+                echo "Local file does not exist: $MODPACK_INPUT"
                 exit 1
             fi
             echo "Copying modpack to downloads/$MODPACK_NAME"
